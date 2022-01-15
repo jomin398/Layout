@@ -6,6 +6,10 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/5.1.3/pixi.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/megajs/dist/main.browser-umd.js"></script>
+    <script src="./src/lib/gdManager/index.js"></script>
+    <script src="./src/lib/megaManager/index.js"></script>
+    <script src="./src/lib/reqManager/index.js"></script>
     <script src="./src/lib/elmMgr.js"></script>
     <script src="./src/index.js"></script>
     <title>Document</title>
@@ -14,10 +18,13 @@
             text-align: center;
             background-color: black;
             margin: 0;
+            position: relative;
         }
-
+        .main_client{
+            margin: 0;
+            position: relative;
+        }
         body canvas {
-
             max-width: 100%;
         }
 
@@ -30,16 +37,26 @@
             left: 0;
             right: 0;
             z-index: 11;
+            background-position: center top;
             justify-content: center;
             align-items: center;
             background-repeat: no-repeat;
-            object-fit: cover;
         }
     </style>
 </head>
 
 <body>
     <audio preload="auto" id="bgm" class="mein" autoplay></audio>
+    <div class="main_client"></div>
+    <!-- <button type="button">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="20" height="20">
+            <rect width="8" height="64" x="41.3" y="-32" rx="0" ry="0" transform="rotate(45)"
+                fill="#4C5B70"></rect>
+            <rect width="8" height="64" x="-4" y="-77.3" rx="0" ry="0" transform="rotate(135)"
+                fill="#4C5B70"></rect>
+        </svg>
+    </button> -->
+    <!-- <button type="button" class="blue main"><span class="text">Name</span></button> -->
 </body>
 
 </html>

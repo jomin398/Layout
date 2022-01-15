@@ -5,51 +5,89 @@ var client;
             this.app = null;
             this.doc = null;
             this.elmMgr = new elmMgr();
+            this.reqMgr = new requester();
             this.soundEl = null;
             this.display = [];
-            this.asset={
-                preload:{audio:[
-                    'Theme_01.ogg',
-                    'Theme_02.ogg'
-                ]}
+            this.asset = {
+                preload: {
+                    audio: [
+                        'Theme_01.ogg',
+                        'Theme_02.ogg'
+                    ]
+                }
             }
         }
         init() {
-            console.log('init')
-            window.addEventListener('load', this.onloadPage.bind(this));
-        };
-        loader(onload){
-            
-        }
-        onloadPage() {
-            const d = document;
-            const clickStart = ()=>{
-                let n = Math.floor(Math.random() * 2);
-                console.log(n)
-                this.soundEl.src = `./asset/blue/audio/${this.asset.preload.audio[n]}`;
-                this.soundEl.addEventListener("load", function() {
-                    this.soundEl.play();
-                });
-                this.soundEl.load();
-                
-                this.display[1].style.backgroundImage='url(./asset/blue/bg/CaffeeBG.png)';
-                console.log('hi')
+            window.onload = () => {
+                const d = document;
+                this.doc = d.body.querySelector('.main_client');
+                //append theme cssfile;
+                d.head.append((() => {
+                    let c = d.createElement('link');
+                    c.rel = 'stylesheet';
+                    c.href = './asset/blue/css/index.css';
+                    return c;
+                })());
+                this.app = new PIXI.Application();
+                this.soundEl = d.body.querySelector('audio.mein#bgm');
+                this.display.push(this.app.view);
+                this.display.push(this.elmMgr.makecover((() => {
+                    let b = this.elmMgr.makeButton('clickMe');
+                    b.className = 'blue main';
+                    b.onclick = () => {
+                        b.remove();
+                        this.onStart()
+                    };
+                    return b;
+                })(), { className: 'meinCover' }))
+                this.doc.append(this.display[0]);
+                this.doc.append(this.display[1]);
             };
-            this.doc = d;
-            this.app = new PIXI.Application();
-            this.soundEl = d.body.querySelector('audio.mein#bgm');
-            this.display.push(this.app.view);
-            this.display.push(this.elmMgr.makecover((() => {
-                let b = this.elmMgr.makeButton('clickMe');
-                b.className = 'clickMe';
-                b.onclick = () => {
-                    b.remove();
-                    clickStart()};
-                return b;
-            })(), { className: 'meinCover' }))
-            d.body.append(this.display[0]);
-            d.body.append(this.display[1]);
-            
+        };
+        loader = {
+            quene: [],
+            add: function (add) {
+                this.quene.push(add);
+            },
+            load: async function () {
+                console.log(typeof this.quene[0]);
+                for(let i=0;i<this.quene.length;i++){
+                    let r = null;
+                    
+                    if(i!= this.quene.length){
+                        r=await this.quene[i](r);
+                    }else{
+                        this.onload(r);
+                    }
+                }
+            },
+            onload: function (c) {
+                console.log(c);
+            }
+        }
+        async onStart() {
+            let n = Math.floor(Math.random() * 2);
+            let mSrc = `./asset/blue/audio/${this.asset.preload.audio[n]}`;
+            console.log('onplay', mSrc)
+            this.soundEl.src = mSrc;
+            this.soundEl.addEventListener("load", function () {
+                this.soundEl.play();
+            });
+            this.soundEl.load();
+
+            this.display[1].style.backgroundImage = 'url(./asset/blue/bg/CaffeeBG.png)';
+            //including loadingBar from external html file;
+            await this.reqMgr.req('./asset/blue/loadingBar.html').then(d => {
+                let e = this.elmMgr.strHTML2Elm(d.response);
+                e.style.display = 'block';
+                this.display[1].append(e)
+            });
+            this.loader.add(async () => {
+                const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
+                let d = await new megaManager().req(assetLink);
+                return d;
+            })
+            this.loader.load();
             // let app = null;
 
 
