@@ -3,9 +3,8 @@ class elmMgr {
 
     }
     strHTML2Elm(str){
-       let t=document.createElement('template');
-       t.innerHTML = str;
-       return t.content.firstChild;
+       let d = new DOMParser();
+       return d.parseFromString(str,'text/html').body.firstChild;
     }
     makeButton(innerHtml,option){
         let c = document.createElement('button');

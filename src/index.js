@@ -50,13 +50,10 @@ var client;
                 this.quene.push(add);
             },
             load: async function () {
-                console.log(typeof this.quene[0]);
                 for(let i=0;i<this.quene.length;i++){
                     let r = null;
-                    
-                    if(i!= this.quene.length){
-                        r=await this.quene[i](r);
-                    }else{
+                    r = await this.quene[i](r);
+                    if(i==this.quene.length-1){
                         this.onload(r);
                     }
                 }
@@ -77,16 +74,20 @@ var client;
 
             this.display[1].style.backgroundImage = 'url(./asset/blue/bg/CaffeeBG.png)';
             //including loadingBar from external html file;
-            await this.reqMgr.req('./asset/blue/loadingBar.html').then(d => {
+            await this.reqMgr.req('./asset/blue/loading.html').then(d => {
                 let e = this.elmMgr.strHTML2Elm(d.response);
                 e.style.display = 'block';
+                e.querySelector('img').src = './asset/blue/bg/BG_View_Kivotos2.jpg';
                 this.display[1].append(e)
             });
             this.loader.add(async () => {
                 const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
                 let d = await new megaManager().req(assetLink);
-                return d;
-            })
+                return Promise.resolve(d);
+            });
+            this.loader.add((d)=>{
+                console.log(d)
+            });
             this.loader.load();
             // let app = null;
 

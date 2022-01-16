@@ -1,0 +1,99 @@
+.prog_wrap {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 1;
+    transform: scale(1);
+    transform-origin: center center;
+    transition: all .2s ease-in;
+    z-index: 1000000;
+    overflow: hidden;
+}
+.prog_con {
+    width: 100%;
+    height: 100%;
+    float: left;
+    position: relative;
+}
+
+.prog_con>span {
+    transform-origin: center center;
+    position: absolute;
+}
+
+.prog_con >span:nth-child(even) {
+    -webkit-animation: size 3.5s;
+    animation: size 3.5s;
+}
+
+.prog_con >span:nth-child(odd) {
+    -webkit-animation: size2 3.5s;
+    animation: size2 3.5s;
+}
+
+
+.prog_con .p_ef01 {
+    left: -5%;
+    top: -10%;
+}
+
+.prog_con .p_ef02 {
+    left: 7%;
+    top: 10%;
+}
+
+.prog_con  .p_ef03 {
+    left: 80%;
+    top: -5%;
+}
+
+.prog_con .p_ef04 {
+    left: 59%;
+    top: 18%;
+}
+
+.prog_con .p_ef05 {
+    left: 37%;
+    top: -3%;
+}
+
+.prog_con .p_ef06 {
+    left: -2%;
+    bottom: -11%;
+}
+
+.prog_con .p_ef07 {
+    left: 37%;
+    bottom: -3%;
+}
+
+html.layoutPC .p_ef08 {
+    left: 70%;
+    bottom: -10%;
+}
+
+@keyframes size {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(4) rotate(2turn);
+        opacity: .7;
+    }
+}
+
+@keyframes size2 {
+    0% {
+        transform: scale(1) rotate(0deg);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(4) rotate(-2turn);
+        opacity: .7;
+    }
+}
