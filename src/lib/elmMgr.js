@@ -2,11 +2,19 @@ class elmMgr {
     constructor() {
 
     }
-    strHTML2Elm(str){
-       let d = new DOMParser();
-       return d.parseFromString(str,'text/html').body.firstChild;
+    displayInfo(d) {
+        const e = JSON.parse(d.response);
+        const doc= this.display[1];
+        doc.querySelector('.descC #title').innerText = e[0].n[1];
+        doc.querySelector('.descC #desc').innerText = e[0].d[1];
+        let ip = `./asset/blue/bg/${e[0].f}`;
+        doc.querySelector('img').src = ip;
     }
-    makeButton(innerHtml,option){
+    strHTML2Elm(str) {
+        let d = new DOMParser();
+        return d.parseFromString(str, 'text/html').body.childNodes[0];
+    }
+    makeButton(innerHtml, option) {
         let c = document.createElement('button');
         if (innerHtml) c.innerHTML = innerHtml;
         if (option) {

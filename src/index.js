@@ -14,6 +14,11 @@ var client;
                         'Theme_01.ogg',
                         'Theme_02.ogg'
                     ]
+                },
+                loaded: {
+                    char: {
+                        tree: null
+                    }
                 }
             }
         }
@@ -50,15 +55,16 @@ var client;
                 this.quene.push(add);
             },
             load: async function () {
-                for(let i=0;i<this.quene.length;i++){
-                    let r = null;
-                    r = await this.quene[i](r);
-                    if(i==this.quene.length-1){
+                let r = null;
+                for (let i = 0, l = this.quene, n = l.length - 1; i < n + 1; i++) {
+                    r = await l[i](r);
+                    if (i == n) {
                         this.onload(r);
                     }
                 }
             },
             onload: function (c) {
+                console.log('onload done.')
                 console.log(c);
             }
         }
@@ -72,21 +78,30 @@ var client;
             });
             this.soundEl.load();
 
-            this.display[1].style.backgroundImage = 'url(./asset/blue/bg/CaffeeBG.png)';
             //including loadingBar from external html file;
             await this.reqMgr.req('./asset/blue/loading.html').then(d => {
                 let e = this.elmMgr.strHTML2Elm(d.response);
                 e.style.display = 'block';
-                e.querySelector('img').src = './asset/blue/bg/BG_View_Kivotos2.jpg';
                 this.display[1].append(e)
             });
+            await this.reqMgr.req('./asset/blue/bg/info.json').then(this.elmMgr.displayInfo.bind(this));
             this.loader.add(async () => {
                 const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
                 let d = await new megaManager().req(assetLink);
-                return Promise.resolve(d);
+                let o = d.tree;
+                let k = Object.keys(o);
+                let c = {};
+                k.map(e => {
+                    c[e] = Object.keys(o[e].characters).map(j => j.replace('.zip', ''))
+                })
+                this.asset.loaded.char.tree =c;
+                return d;
             });
-            this.loader.add((d)=>{
-                console.log(d)
+            this.loader.add((d) => {
+                let o = this.asset.loaded.char.tree;
+                console.log(o[Object.keys(o)[0]])
+                console.log(d.children[0]);
+                console.log(o);
             });
             this.loader.load();
             // let app = null;
