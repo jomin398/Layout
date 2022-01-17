@@ -1,38 +1,64 @@
-.loading {
+.meinCover body {
     width: 100%;
     height: 100%;
     position: relative;
-    display: flex;
-    flex-direction: column;
+}
+
+.loading {
+    position: relative;
+    display: block;
+    height: 100%;
+    /* flex-direction: column; */
     /* #2596be */
 }
 
 .if {
-    text-align: center;
+    display: grid;
+    grid-template-columns: 0.4fr 2.2fr 0.4fr;
+    grid-template-rows: 1fr 1fr auto;
+    justify-items: center;
+    gap: 0;
+    grid-template-areas:
+        "l i r"
+        "l i r"
+        "desc desc desc";
+    position: relative;
 }
 
-.if img {
-    display: block;
-    width: 40%;
-    /* max-width: 400px; */
+.if .bg {
+    grid-area: i;
+    width: 100%;
     object-fit: cover;
     height: auto;
-    margin: 10px auto;
+    margin: 10px;
+}
+
+.if .left,
+.if .right {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bolder;
+    writing-mode: vertical-rl;
+    text-align: start;
+    padding: 10px 0 0 0;
+    position: absolute;
+}
+
+.if .left {
+    grid-area: l;
+}
+
+.if .right {
+    grid-area: r;
 }
 
 .if .descC {
-    width: 95%;
-    height: 80px;
+    grid-area: desc;
+    /* height: 80px; */
     display: block;
     text-align: left;
     margin: 0 auto;
     overflow: auto;
-}
-
-.if .descC #title {
-    color: white;
-    font-size: 1.2rem;
-    font-weight: bolder;
 }
 
 .if .descC #desc {
@@ -44,10 +70,11 @@
 
 .progress {
     display: block;
-    width: 100%;
+    width: 90%;
     text-align: left;
     position: relative;
     bottom: 0;
+    margin: 0 auto;
 }
 
 .progress #title {
@@ -73,6 +100,44 @@ progress::-webkit-progress-value {
 progress::-moz-progress-bar {
     background-color: white !important;
 }
+/* mob is Landscape? */
+@media screen and (min-width: 481px) and (max-width: 800px) {
+    .if {
+        grid-template-columns: 0.5fr 1.5fr 0.5fr;
+    }
 
-@media screen and (min-width: 400px) {
+    .if .left,
+    .if .right {
+        font-size: 1rem;
+    }
+
+    .if .bg {
+        width: 20%;
+        max-width: 300px;
+    }
+
+    .if .descC #desc {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 1025px){
+    .if {
+        grid-template-columns: 0.5fr 1.5fr 0.5fr;
+    }
+
+    .if .left,
+    .if .right {
+        font-size: 1.8rem;
+    }
+
+    .if .bg {
+        width: 60%;
+        max-width: 300px;
+    }
+
+    .if .descC #desc {
+        font-size: 1.3rem;
+    }
+
 }

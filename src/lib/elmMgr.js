@@ -4,10 +4,23 @@ class elmMgr {
     }
     displayInfo(d) {
         const e = JSON.parse(d.response);
+        const descSelNum = 0;
+        const data = e[descSelNum];
         const doc= this.display[1];
-        doc.querySelector('.descC #title').innerText = e[0].n[1];
-        doc.querySelector('.descC #desc').innerText = e[0].d[1];
-        let ip = `./asset/blue/bg/${e[0].f}`;
+        const telms = [doc.querySelector('.left'),doc.querySelector('.right')];
+        const tArr = [data.n[1][0]?data.n[1][0]:'',data.n[1][1]?data.n[1][1]:''];
+        if(data.ns){
+            data.ns.map((e,i)=>{
+                if(e){
+                    Object.assign(telms[i].style,e)
+                }
+            })
+        }
+        telms[0].innerText = tArr[0];
+        telms[1].innerText = tArr[1];
+        
+        doc.querySelector('.descC #desc').innerText = data.d[1];
+        let ip = `./asset/blue/bg/${data.f}`;
         doc.querySelector('img').src = ip;
     }
     strHTML2Elm(str) {

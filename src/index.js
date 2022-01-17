@@ -126,7 +126,9 @@ var client;
                 theme = d.children[tnum];
                 console.log(`Theme is ${theme.name}`)
                 console.log('student list',o[Object.keys(o)[tnum]])
-                console.log(d.children[tnum].children.map);
+                console.log(d.children[tnum].children.filter(e=>{
+                    return noVoice?e.name.toLowerCase() == 'characters':e;
+                }));
                 // console.log(d.children[tnum].children.find(e=>e.name=="characters"));
             });
             this.loader.load();
