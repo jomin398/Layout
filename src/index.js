@@ -6,6 +6,7 @@ var client;
             this.doc = null;
             this.elmMgr = new elmMgr();
             this.reqMgr = new requester();
+            this.progressMgr = new ProgressManager();
             this.soundEl = null;
             this.display = [];
             this.asset = {
@@ -21,7 +22,7 @@ var client;
                     }
                 }
             }
-        }
+        };
         init() {
             window.onload = () => {
                 const d = document;
@@ -50,6 +51,7 @@ var client;
             };
         };
         loader = {
+            progress: null,
             quene: [],
             add: function (add) {
                 this.quene.push(add);
@@ -58,16 +60,23 @@ var client;
                 let r = null;
                 for (let i = 0, l = this.quene, n = l.length - 1; i < n + 1; i++) {
                     r = await l[i](r);
+                    if (this.progress) {
+                        this.progress.progressUPdate((i/l.length)*100);
+                    };
                     if (i == n) {
+                        if (this.progress) {
+                            this.progress.progressUPdate((i+1)/l.length*100);
+                        };
                         this.onload(r);
                     }
                 }
             },
             onload: function (c) {
+                this.quene = [];
                 console.log('onload done.')
                 console.log(c);
             }
-        }
+        };
         async onStart() {
             let n = Math.floor(Math.random() * 2);
             let mSrc = `./asset/blue/audio/${this.asset.preload.audio[n]}`;
@@ -79,12 +88,19 @@ var client;
             this.soundEl.load();
 
             //including loadingBar from external html file;
-            await this.reqMgr.req('./asset/blue/loading.html').then(d => {
+            this.loader.add(() => this.reqMgr.req('./asset/blue/loading.html'))
+            this.loader.add(d => {
                 let e = this.elmMgr.strHTML2Elm(d.response);
                 e.style.display = 'block';
+                this.progressMgr.init(e.querySelector('.progress'));
+                this.loader.progress = this.progressMgr;
                 this.display[1].append(e)
             });
-            await this.reqMgr.req('./asset/blue/bg/info.json').then(this.elmMgr.displayInfo.bind(this));
+
+            this.loader.add(() => {
+                this.reqMgr.req('./asset/blue/bg/info.json')
+                    .then(this.elmMgr.displayInfo.bind(this))
+            })
             this.loader.add(async () => {
                 const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
                 let d = await new megaManager().req(assetLink);
@@ -94,14 +110,24 @@ var client;
                 k.map(e => {
                     c[e] = Object.keys(o[e].characters).map(j => j.replace('.zip', ''))
                 })
-                this.asset.loaded.char.tree =c;
+                this.asset.loaded.char.tree = c;
                 return d;
             });
-            this.loader.add((d) => {
+            this.loader.add(d => {
                 let o = this.asset.loaded.char.tree;
-                console.log(o[Object.keys(o)[0]])
-                console.log(d.children[0]);
-                console.log(o);
+                const tnum = 1;
+                const noVoice = true;
+                let theme = null;
+                // console.log(o);
+                let ct = Object.keys(o).map(e=>Object.keys(o[e]).length).reduce((p,c)=>p+c);
+                console.log(`sum of all students.. they are ${ct} students.`)
+
+                //select blue;
+                theme = d.children[tnum];
+                console.log(`Theme is ${theme.name}`)
+                console.log('student list',o[Object.keys(o)[tnum]])
+                console.log(d.children[tnum].children.map);
+                // console.log(d.children[tnum].children.find(e=>e.name=="characters"));
             });
             this.loader.load();
             // let app = null;
@@ -122,7 +148,7 @@ var client;
 
             // text.text = 'download....';
             // text.updateText();
-        }
+        };
     };
     client.init();
     return client;

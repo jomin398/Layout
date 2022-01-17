@@ -12,7 +12,7 @@ class elmMgr {
     }
     strHTML2Elm(str) {
         let d = new DOMParser();
-        return d.parseFromString(str, 'text/html').body.childNodes[0];
+        return d.parseFromString(str, 'text/html').body;
     }
     makeButton(innerHtml, option) {
         let c = document.createElement('button');
