@@ -1,0 +1,114 @@
+.if {
+    display: grid;
+    grid-template-columns: 0.4fr 2.2fr 0.4fr;
+    grid-template-rows: 1fr 1fr auto;
+    justify-items: center;
+    gap: 0;
+    grid-template-areas:
+        "l i r"
+        "l i r"
+        "desc desc desc";
+    position: relative;
+}
+
+.if .bg {
+    grid-area: i;
+    width: 100%;
+    object-fit: cover;
+    height: auto;
+    margin: 10px;
+}
+
+.if .left,
+.if .right {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bolder;
+    writing-mode: vertical-rl;
+    text-align: start;
+    padding: 10px 0 0 0;
+    position: absolute;
+}
+
+.if .left {
+    grid-area: l;
+}
+
+.if .right {
+    grid-area: r;
+}
+
+.loading#chr .if .left,
+.loading#chr .if .right {
+    font-size: 1.5rem;
+}
+
+.if .descC {
+    grid-area: desc;
+    /* height: 80px; */
+    display: block;
+    text-align: left;
+    margin: 0 auto;
+    overflow: auto;
+}
+
+.if .descC #desc {
+    margin-left: 1rem;
+    font-size: 1rem;
+    color: white;
+    text-overflow: ellipsis;
+}
+.loading.t2 .if {
+    display: grid;
+    grid-template-columns: 0.4fr 2.2fr 0.4fr;
+    grid-template-areas:
+        "l i r"
+        "l i r";
+    position: relative;
+}
+/* mob is Landscape? */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+
+    .if .left,
+    .if .right {
+        font-size: 1.5rem;
+    }
+
+    .if .bg {
+        width: 50%;
+    }
+
+    .loading#chr .if .bg {
+        width: 19%;
+    }
+
+
+    .if .descC #desc {
+        font-size: 1rem;
+    }
+}
+
+@media (min-width: 1025px) {
+    .if {
+        grid-template-columns: 0.5fr 1.5fr 0.5fr;
+    }
+
+    .if .left,
+    .if .right {
+        font-size: 1.8rem;
+    }
+
+    .if .bg {
+        width: 80%;
+    }
+
+    .loading#chr .if .bg {
+        width: 60%;
+        max-width: 400px;
+    }
+
+    .if .descC #desc {
+        font-size: 1.3rem;
+    }
+
+}

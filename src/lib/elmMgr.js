@@ -4,22 +4,27 @@ class elmMgr {
     }
     displayInfo(d) {
         const e = JSON.parse(d.response);
-        const descSelNum = 0;
+
+        //random descript Select Num
+        const descSelNum = 1;
         const data = e[descSelNum];
+
         const doc= this.display[1];
+        doc.querySelector('.loading').id = data.t?['bg','chr'][data.t]:'bg';
         const telms = [doc.querySelector('.left'),doc.querySelector('.right')];
         const tArr = [data.n[1][0]?data.n[1][0]:'',data.n[1][1]?data.n[1][1]:''];
-        if(data.ns){
-            data.ns.map((e,i)=>{
-                if(e){
-                    Object.assign(telms[i].style,e)
-                }
-            })
-        }
+        // if(data.ns){
+        //     data.ns.map((e,i)=>{
+        //         if(e){
+        //             Object.assign(telms[i].style,e)
+        //         }
+        //     })
+        // }
         telms[0].innerText = tArr[0];
         telms[1].innerText = tArr[1];
         
-        doc.querySelector('.descC #desc').innerText = data.d[1];
+        // doc.querySelector('.descC #desc').innerText = data.d[1];
+        
         let ip = `./asset/blue/bg/${data.f}`;
         doc.querySelector('img').src = ip;
     }

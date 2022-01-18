@@ -86,9 +86,10 @@ var client;
                 this.soundEl.play();
             });
             this.soundEl.load();
-
+            //random descript Display type num
+        const descDSelNum = 1;
             //including loadingBar from external html file;
-            this.loader.add(() => this.reqMgr.req('./asset/blue/loading.html'))
+            this.loader.add(() => this.reqMgr.req(`./asset/blue/loadingT${descDSelNum}.html`))
             this.loader.add(d => {
                 let e = this.elmMgr.strHTML2Elm(d.response);
                 e.style.display = 'block';
