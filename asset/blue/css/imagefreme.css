@@ -57,15 +57,66 @@
     font-size: 1rem;
     color: white;
     text-overflow: ellipsis;
+    font-weight: bolder;
 }
-.loading.t2 .if {
+
+.loading.t1 {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.loading.t1 .if {
     display: grid;
     grid-template-columns: 0.4fr 2.2fr 0.4fr;
+    grid-template-rows: 1fr 1fr;
     grid-template-areas:
         "l i r"
         "l i r";
     position: relative;
+    height: 90%;
 }
+
+.loading.t1#chr .if .right {
+    justify-self: baseline;
+}
+
+.loading.t1 .if .bg {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: 0 auto;
+    grid-area: unset;
+}
+
+.loading.t1 .descC {
+    position: relative;
+    width: 100%;
+    grid-area: i;
+}
+
+.loading.t1 #desc {
+    position: absolute;
+    right: 0;
+    writing-mode: vertical-rl;
+}
+
+/* mob is Portrait? */
+@media (min-width: 320px) and (max-width: 480px) {
+    .loading.t1 .if .bg {
+        max-width: 185px;
+        margin: 0;
+    }
+
+    .loading.t1 .if #desc {
+        margin: 1.5rem 0 0 0;
+        font-size: 1.2rem;
+    }
+}
+
 /* mob is Landscape? */
 @media screen and (min-width: 768px) and (max-width: 1024px) {
 
@@ -85,6 +136,18 @@
 
     .if .descC #desc {
         font-size: 1rem;
+    }
+
+    .loading.t1 .if {
+        height: 70%;
+    }
+
+    .loading.t1 .if .bg {
+        width: 20%;
+    }
+
+    .loading.t1 .if #desc {
+        margin: 1rem 3rem 0 0;
     }
 }
 
@@ -109,6 +172,16 @@
 
     .if .descC #desc {
         font-size: 1.3rem;
+    }
+
+    .loading.t1 #desc {
+        font-size: 1.5rem;
+        margin: 3rem 5rem 0 0;
+    }
+
+    .loading.t1#chr .if .left,
+    .loading.t1#chr .if .right {
+        padding: 2rem 0 0 0;
     }
 
 }

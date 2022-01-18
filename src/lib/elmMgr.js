@@ -1,30 +1,44 @@
 class elmMgr {
     constructor() {
-
+        this.client = null;
     }
-    displayInfo(d) {
+    init(client) {
+        this.client = client;
+    }
+    switchEleType() {
+        let a = this.client.display[1].querySelector('.descC');
+        let b = this.client.display[1].querySelector('.bg');
+        this.client.display[1].querySelector('.left').insertAdjacentElement('afterend', a);
+        a.insertAdjacentElement('afterbegin', b);
+    }
+    displayInfo(d, descSelNum) {
+        console.log(this)
         const e = JSON.parse(d.response);
-
-        //random descript Select Num
-        const descSelNum = 1;
         const data = e[descSelNum];
+        let doc = this.client.asset.loaded.loadingPage;
+        this.client.display[1] = doc;
 
-        const doc= this.display[1];
-        doc.querySelector('.loading').id = data.t?['bg','chr'][data.t]:'bg';
-        const telms = [doc.querySelector('.left'),doc.querySelector('.right')];
-        const tArr = [data.n[1][0]?data.n[1][0]:'',data.n[1][1]?data.n[1][1]:''];
-        // if(data.ns){
-        //     data.ns.map((e,i)=>{
-        //         if(e){
-        //             Object.assign(telms[i].style,e)
-        //         }
-        //     })
-        // }
+        //detect type
+        if (data.t && data.t == 1) {
+            this.switchEleType();
+            this.client.display[1].querySelector('.loading').classList.add('t1');
+        }
+        doc = this.client.display[1];
+        doc.querySelector('.loading').id = data.t ? ['bg', 'chr'][data.t] : 'bg';
+        const telms = [doc.querySelector('.left'), doc.querySelector('.right')];
+        const tArr = [data.n[1][0] ? data.n[1][0] : '', data.n[1][1] ? data.n[1][1] : ''];
+        if (data.ns) {
+            data.ns.map((e, i) => {
+                if (e) {
+                    Object.assign(telms[i].style, e)
+                }
+            })
+        }
         telms[0].innerText = tArr[0];
         telms[1].innerText = tArr[1];
-        
-        // doc.querySelector('.descC #desc').innerText = data.d[1];
-        
+
+        doc.querySelector('#desc').innerText = data.d[1];
+
         let ip = `./asset/blue/bg/${data.f}`;
         doc.querySelector('img').src = ip;
     }

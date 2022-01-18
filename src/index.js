@@ -19,7 +19,8 @@ var client;
                 loaded: {
                     char: {
                         tree: null
-                    }
+                    },
+                    loadingPage: null
                 }
             }
         };
@@ -37,6 +38,7 @@ var client;
                 this.app = new PIXI.Application();
                 this.soundEl = d.body.querySelector('audio.mein#bgm');
                 this.display.push(this.app.view);
+                this.elmMgr.init(this);
                 this.display.push(this.elmMgr.makecover((() => {
                     let b = this.elmMgr.makeButton('clickMe');
                     b.className = 'blue main';
@@ -61,11 +63,11 @@ var client;
                 for (let i = 0, l = this.quene, n = l.length - 1; i < n + 1; i++) {
                     r = await l[i](r);
                     if (this.progress) {
-                        this.progress.progressUPdate((i/l.length)*100);
+                        this.progress.progressUPdate((i / l.length) * 100);
                     };
                     if (i == n) {
                         if (this.progress) {
-                            this.progress.progressUPdate((i+1)/l.length*100);
+                            this.progress.progressUPdate((i + 1) / l.length * 100);
                         };
                         this.onload(r);
                     }
@@ -86,21 +88,23 @@ var client;
                 this.soundEl.play();
             });
             this.soundEl.load();
-            //random descript Display type num
-        const descDSelNum = 1;
+            //random descript Select Num
+            const descSelNum = 1;
+
             //including loadingBar from external html file;
-            this.loader.add(() => this.reqMgr.req(`./asset/blue/loadingT${descDSelNum}.html`))
+            this.loader.add(() => this.reqMgr.req(`./asset/blue/loading.html`))
             this.loader.add(d => {
                 let e = this.elmMgr.strHTML2Elm(d.response);
                 e.style.display = 'block';
                 this.progressMgr.init(e.querySelector('.progress'));
                 this.loader.progress = this.progressMgr;
+                this.asset.loaded.loadingPage = e;
                 this.display[1].append(e)
             });
 
-            this.loader.add(() => {
-                this.reqMgr.req('./asset/blue/bg/info.json')
-                    .then(this.elmMgr.displayInfo.bind(this))
+            this.loader.add(async () => {
+                let d = await this.reqMgr.req('./asset/blue/bg/info.json');
+                this.elmMgr.displayInfo(d, descSelNum);
             })
             this.loader.add(async () => {
                 const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
@@ -120,15 +124,15 @@ var client;
                 const noVoice = true;
                 let theme = null;
                 // console.log(o);
-                let ct = Object.keys(o).map(e=>Object.keys(o[e]).length).reduce((p,c)=>p+c);
+                let ct = Object.keys(o).map(e => Object.keys(o[e]).length).reduce((p, c) => p + c);
                 console.log(`sum of all students.. they are ${ct} students.`)
 
                 //select blue;
                 theme = d.children[tnum];
                 console.log(`Theme is ${theme.name}`)
-                console.log('student list',o[Object.keys(o)[tnum]])
-                console.log(d.children[tnum].children.filter(e=>{
-                    return noVoice?e.name.toLowerCase() == 'characters':e;
+                console.log('student list', o[Object.keys(o)[tnum]])
+                console.log(d.children[tnum].children.filter(e => {
+                    return noVoice ? e.name.toLowerCase() == 'characters' : e;
                 }));
                 // console.log(d.children[tnum].children.find(e=>e.name=="characters"));
             });
