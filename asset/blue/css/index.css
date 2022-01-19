@@ -1,6 +1,9 @@
 @import './progress.css';
 @import './loading.css';
+
 @import './imagefreme.css';
+@import './chrDisp.css';
+
 button.blue.main {
     /* height: calc(100% - 2px); */
     background-color: rgb(255, 255, 255);

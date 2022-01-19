@@ -89,7 +89,7 @@ var client;
             });
             this.soundEl.load();
             //random descript Select Num
-            const descSelNum = 1;
+            const descSelNum = 0;
 
             //including loadingBar from external html file;
             this.loader.add(() => this.reqMgr.req(`./asset/blue/loading.html`))

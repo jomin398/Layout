@@ -38,7 +38,7 @@ class elmMgr {
         telms[1].innerText = tArr[1];
 
         doc.querySelector('#desc').innerText = data.d[1];
-
+        doc.querySelector('.if').dataset.chrname = data.f.split('.')[0];
         let ip = `./asset/blue/bg/${data.f}`;
         doc.querySelector('img').src = ip;
     }

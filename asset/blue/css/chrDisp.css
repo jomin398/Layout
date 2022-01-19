@@ -1,0 +1,23 @@
+/* mob is Portrait? */
+@media (min-width: 320px) and (max-width: 480px) {
+    .loading.t1 .if[data-chrname=aris] .bg {
+        max-width: unset !important;
+    }
+}
+
+/* mob is Landscape? */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    .loading.t1 .if[data-chrname=aris] {
+        height: 75%;
+    }
+
+    .loading.t1 .if[data-chrname=aris] .bg {
+        width: 45%;
+    }
+}
+
+@media (min-width: 1025px) {
+    .loading.t1 .if[data-chrname=aris] .bg {
+        max-width: unset !important;
+    }
+}

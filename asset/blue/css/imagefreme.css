@@ -106,8 +106,8 @@
 
 /* mob is Portrait? */
 @media (min-width: 320px) and (max-width: 480px) {
-    .loading.t1 .if .bg {
-        max-width: 185px;
+    .loading.t1#chr .if .bg {
+        max-width: 250px;
         margin: 0;
     }
 
@@ -129,10 +129,7 @@
         width: 50%;
     }
 
-    .loading#chr .if .bg {
-        width: 19%;
-    }
-
+    
 
     .if .descC #desc {
         font-size: 1rem;
