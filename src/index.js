@@ -10,18 +10,13 @@ var client;
             this.soundEl = null;
             this.display = [];
             this.asset = {
-                preload: {
-                    audio: [
-                        'Theme_01.ogg',
-                        'Theme_02.ogg'
-                    ]
-                },
                 loaded: {
                     char: {
                         tree: null
                     },
                     loadingPage: null,
-                    data: null
+                    data: null,
+                    audio:[]
                 }
             }
         };
@@ -85,27 +80,10 @@ var client;
             const descSelNum = 0;
             let n = Math.floor(Math.random() * 2);
 
-            //download external AssetData;
-            this.loader.add(async () => {
-                const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
-                let d = await this.reqMgr.megaMgr.req(assetLink);
-                this.asset.loaded.data = d;
-            });
-            //append sound.
-            this.loader.add(() => {
-                let mSrc = `./asset/blue/audio/${this.asset.preload.audio[n]}`;
-                console.log('onplay', mSrc);
-                this.soundEl.src = mSrc;
-                this.soundEl.addEventListener("load", function () {
-                    this.soundEl.play();
-                });
-                this.soundEl.load();
-            });
-
-            //including loadingBar from external html file;
-            this.loader.add(() => this.reqMgr.req(`./asset/blue/loading.html`));
             //append loading page.
-            this.loader.add(d => {
+            this.loader.add(async () => {
+                //including loadingBar from external html file;
+                let d = await this.reqMgr.req(`./asset/blue/loading.html`);
                 let e = this.elmMgr.strHTML2Elm(d.response);
                 e.style.display = 'block';
                 this.progressMgr.init(e.querySelector('.progress'));
@@ -113,6 +91,35 @@ var client;
                 this.asset.loaded.loadingPage = e;
                 this.display[1].append(e)
             });
+            //load external AssetData 's metadata.;
+            this.loader.add(async () => {
+                const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
+                let d = await this.reqMgr.megaMgr.req(assetLink);
+                console.log(d)
+                this.asset.loaded.data = d;
+            });
+
+            //req sound.
+            this.loader.add(async () => {
+                const tl = this.asset.loaded.data.children.map(e => e.name);
+                // const tree = this.reqMgr.megaMgr.reTreeMaker(this.asset.loaded.data.tree, 'sound', j => j);
+                const soundarr = this.asset.loaded.data.children
+                    .find(e => e.name == tl[1]).children
+                    .find(e => e.name == 'sound').children;
+                const sflink = soundarr[n];
+                let u = await this.reqMgr.megaMgr.downloadPromise(sflink, { type: "audio/ogg" });
+                this.asset.loaded.audio.push(u);
+            });
+            //append sound.
+            this.loader.add(()=> {
+                let u = this.asset.loaded.audio[0];
+                this.soundEl.src = u;
+                this.soundEl.addEventListener("load", function () {
+                    console.log('onplay', u);
+                    this.soundEl.play();
+                });
+                this.soundEl.load();
+            })
             //req bg info.
             this.loader.add(async () => {
                 let d = await this.reqMgr.req('./asset/blue/bg/info.json');

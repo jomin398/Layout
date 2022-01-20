@@ -49,7 +49,13 @@ class megaManager {
         let l = [];
         rpf = rpf ? rpf : d => d;
         k.map((e, i) => {
-            l.push(Object.keys(o[e][searchWorld]));
+            // console.log(i,o[e])
+            if (o[e][searchWorld]) {
+                l.push(Object.keys(o[e][searchWorld]));
+            } else {
+                l.push([])
+            }
+
             c[e] = l[i].map(rpf);
         })
         return { t: c, gl: k, fl: l };
@@ -80,5 +86,25 @@ class megaManager {
     async req(url) {
         const f = await this.preReq(url);
         return this.wrapper(f);
-    }
+    };
+
+    /**
+     * 
+     * @param {object} f mega file object. 
+     * @param {object} fo settable blob option object.
+     * @param {string} fo.type set blob mime type
+     * @returns {string} file blob url
+     */
+    downloadPromise(f, fo) {
+        if (!f) throw new ReferenceError('file is can not be null');
+        if (!fo) throw new ReferenceError('blob mime is can not be null');
+
+        return new Promise((resolve, reject) => {
+            f.download((err, data) => {
+                if (err) reject(err);
+                let u = window.URL.createObjectURL(new Blob([data.buffer, fo]));
+                resolve(u);
+            });
+        });
+    };
 }
