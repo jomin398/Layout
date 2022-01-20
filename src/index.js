@@ -20,7 +20,8 @@ var client;
                     char: {
                         tree: null
                     },
-                    loadingPage: null
+                    loadingPage: null,
+                    data: null
                 }
             }
         };
@@ -80,19 +81,30 @@ var client;
             }
         };
         async onStart() {
-            let n = Math.floor(Math.random() * 2);
-            let mSrc = `./asset/blue/audio/${this.asset.preload.audio[n]}`;
-            console.log('onplay', mSrc)
-            this.soundEl.src = mSrc;
-            this.soundEl.addEventListener("load", function () {
-                this.soundEl.play();
-            });
-            this.soundEl.load();
             //random descript Select Num
             const descSelNum = 0;
+            let n = Math.floor(Math.random() * 2);
+
+            //download external AssetData;
+            this.loader.add(async () => {
+                const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
+                let d = await this.reqMgr.megaMgr.req(assetLink);
+                this.asset.loaded.data = d;
+            });
+            //append sound.
+            this.loader.add(() => {
+                let mSrc = `./asset/blue/audio/${this.asset.preload.audio[n]}`;
+                console.log('onplay', mSrc);
+                this.soundEl.src = mSrc;
+                this.soundEl.addEventListener("load", function () {
+                    this.soundEl.play();
+                });
+                this.soundEl.load();
+            });
 
             //including loadingBar from external html file;
-            this.loader.add(() => this.reqMgr.req(`./asset/blue/loading.html`))
+            this.loader.add(() => this.reqMgr.req(`./asset/blue/loading.html`));
+            //append loading page.
             this.loader.add(d => {
                 let e = this.elmMgr.strHTML2Elm(d.response);
                 e.style.display = 'block';
@@ -101,24 +113,21 @@ var client;
                 this.asset.loaded.loadingPage = e;
                 this.display[1].append(e)
             });
-
+            //req bg info.
             this.loader.add(async () => {
                 let d = await this.reqMgr.req('./asset/blue/bg/info.json');
                 this.elmMgr.displayInfo(d, descSelNum);
             })
-            this.loader.add(async () => {
-                const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
-                let d = await new megaManager().req(assetLink);
-                let o = d.tree;
-                let k = Object.keys(o);
-                let c = {};
-                k.map(e => {
-                    c[e] = Object.keys(o[e].characters).map(j => j.replace('.zip', ''))
-                })
-                this.asset.loaded.char.tree = c;
-                return d;
-            });
-            this.loader.add(d => {
+
+            //Make chr Tree;
+            this.loader.add(() => {
+                const searchWorld = 'characters';
+                const tree = this.reqMgr.megaMgr.reTreeMaker(this.asset.loaded.data.tree, searchWorld, j => j.replace('.zip', ''));
+                console.log(tree)
+                this.asset.loaded.char.tree = tree.t;
+            })
+            this.loader.add(() => {
+                const d = this.asset.loaded.data;
                 let o = this.asset.loaded.char.tree;
                 const tnum = 1;
                 const noVoice = true;
