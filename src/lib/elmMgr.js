@@ -17,7 +17,6 @@ class elmMgr {
         const data = e[descSelNum];
         let doc = this.client.asset.loaded.loadingPage;
         this.client.display[1] = doc;
-
         //detect type
         if (data.t && data.t == 1) {
             this.switchEleType();

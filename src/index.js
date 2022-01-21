@@ -9,6 +9,12 @@ var client;
             this.progressMgr = new ProgressManager();
             this.soundEl = null;
             this.display = [];
+            this.theme = {
+                no: 1,
+                noVoice: true,
+                name: null,
+                data: null
+            };
             this.asset = {
                 loaded: {
                     char: {
@@ -16,7 +22,7 @@ var client;
                     },
                     loadingPage: null,
                     data: null,
-                    audio:[]
+                    audio: []
                 }
             }
         };
@@ -76,9 +82,49 @@ var client;
             }
         };
         async onStart() {
-            //random descript Select Num
-            const descSelNum = 0;
             let n = Math.floor(Math.random() * 2);
+
+            //load external AssetData 's metadata.;
+            this.loader.add(async () => {
+                const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
+                let d = await this.reqMgr.megaMgr.req(assetLink);
+                console.log(d)
+                this.asset.loaded.data = d;
+            });
+            this.loader.add(() => {
+                //Make chr Tree;
+
+                const searchWorld = 'characters';
+                const tree = this.reqMgr.megaMgr.reTreeMaker(this.asset.loaded.data.tree, searchWorld, j => j.replace('.zip', ''));
+                console.log(tree)
+                this.asset.loaded.char.tree = tree.t;
+
+                const chrTree = this.asset.loaded.char.tree;
+                const tnum = this.theme.no;
+                const noVoice = this.theme.noVoice;
+                this.theme.data = this.asset.loaded.data.children[tnum];
+                this.theme.name = this.theme.data.name;
+
+                // console.log(o);
+                let stds = [];
+                Object.keys(chrTree).map(e => stds = stds.concat(chrTree[e]));
+                let stdCt = stds.length;
+                console.log(stds)
+                console.log(`sum of all students.. they are ${stdCt} students.`)
+
+                //select blue;
+                console.log(`Theme is ${this.theme.name}`)
+                console.log('student list', chrTree[Object.keys(chrTree)[tnum]])
+                console.log(this.theme.data.children.filter(e => {
+                    return noVoice ? e.name.toLowerCase() == 'characters' : e;
+                }));
+                //bg img array.
+                const bgimgArr = this.theme.data.children.filter(e => e.name.toLowerCase() == 'bgi' && e.parent.name == this.theme.name)[0].children.filter(e=>e.name.includes('BG_View'));
+                console.log(bgimgArr);
+                
+                //filterout BG_View_
+                // console.log(d.children[tnum].children.find(e=>e.name=="characters"));
+            });
 
             //append loading page.
             this.loader.add(async () => {
@@ -89,16 +135,10 @@ var client;
                 this.progressMgr.init(e.querySelector('.progress'));
                 this.loader.progress = this.progressMgr;
                 this.asset.loaded.loadingPage = e;
-                this.display[1].append(e)
+                this.display[1].append(e);
+                const tree = this.reqMgr.megaMgr.reTreeMaker(this.asset.loaded.data.tree, 'bgi', j => j);
+                console.log(tree)
             });
-            //load external AssetData 's metadata.;
-            this.loader.add(async () => {
-                const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
-                let d = await this.reqMgr.megaMgr.req(assetLink);
-                console.log(d)
-                this.asset.loaded.data = d;
-            });
-
             //req sound.
             this.loader.add(async () => {
                 const tl = this.asset.loaded.data.children.map(e => e.name);
@@ -111,7 +151,7 @@ var client;
                 this.asset.loaded.audio.push(u);
             });
             //append sound.
-            this.loader.add(()=> {
+            this.loader.add(() => {
                 let u = this.asset.loaded.audio[0];
                 this.soundEl.src = u;
                 this.soundEl.addEventListener("load", function () {
@@ -122,36 +162,13 @@ var client;
             })
             //req bg info.
             this.loader.add(async () => {
+                //random descript Select Num
+                const descSelNum = 0;
                 let d = await this.reqMgr.req('./asset/blue/bg/info.json');
                 this.elmMgr.displayInfo(d, descSelNum);
             })
 
-            //Make chr Tree;
-            this.loader.add(() => {
-                const searchWorld = 'characters';
-                const tree = this.reqMgr.megaMgr.reTreeMaker(this.asset.loaded.data.tree, searchWorld, j => j.replace('.zip', ''));
-                console.log(tree)
-                this.asset.loaded.char.tree = tree.t;
-            })
-            this.loader.add(() => {
-                const d = this.asset.loaded.data;
-                let o = this.asset.loaded.char.tree;
-                const tnum = 1;
-                const noVoice = true;
-                let theme = null;
-                // console.log(o);
-                let ct = Object.keys(o).map(e => Object.keys(o[e]).length).reduce((p, c) => p + c);
-                console.log(`sum of all students.. they are ${ct} students.`)
 
-                //select blue;
-                theme = d.children[tnum];
-                console.log(`Theme is ${theme.name}`)
-                console.log('student list', o[Object.keys(o)[tnum]])
-                console.log(d.children[tnum].children.filter(e => {
-                    return noVoice ? e.name.toLowerCase() == 'characters' : e;
-                }));
-                // console.log(d.children[tnum].children.find(e=>e.name=="characters"));
-            });
             this.loader.load();
             // let app = null;
 
