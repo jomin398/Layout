@@ -1,6 +1,7 @@
 class elmMgr {
     constructor() {
         this.client = null;
+        this.callDone = null;
     }
     init(client) {
         this.client = client;
@@ -11,35 +12,44 @@ class elmMgr {
         this.client.display[1].querySelector('.left').insertAdjacentElement('afterend', a);
         a.insertAdjacentElement('afterbegin', b);
     }
-    displayInfo(d, descSelNum) {
+    async displayInfo(d, name, type, descPic) {
         console.log(this)
-        const e = JSON.parse(d.response);
-        const data = e[descSelNum];
+        // const e = JSON.parse(d.response);
         let doc = this.client.asset.loaded.loadingPage;
         this.client.display[1] = doc;
         //detect type
-        if (data.t && data.t == 1) {
+        if (type && type == 1) {
             this.switchEleType();
             this.client.display[1].querySelector('.loading').classList.add('t1');
         }
         doc = this.client.display[1];
-        doc.querySelector('.loading').id = data.t ? ['bg', 'chr'][data.t] : 'bg';
+        doc.querySelector('.loading').id = type ? ['bg', 'chr'][type] : 'bg';
         const telms = [doc.querySelector('.left'), doc.querySelector('.right')];
-        const tArr = [data.n[1][0] ? data.n[1][0] : '', data.n[1][1] ? data.n[1][1] : ''];
-        if (data.ns) {
-            data.ns.map((e, i) => {
-                if (e) {
-                    Object.assign(telms[i].style, e)
-                }
-            })
+        let o = d.find(e => e.f.toLowerCase() == name) || null;
+        let tArr = null;
+        if (o) {
+            tArr = [o.n[1][0] ? o.n[1][0] : '', o.n[1][1] ? o.n[1][1] : ''];
+            if (o.ns) {
+                o.ns.map((e, i) => {
+                    if (e) {
+                        Object.assign(telms[i].style, e)
+                    }
+                })
+            }
+            telms[0].innerText = tArr ? tArr[0] : '';
+            telms[1].innerText = tArr ? tArr[1] : '';
+            doc.querySelector('#desc').innerText = o.d[1];
+            if (type == 1) doc.querySelector('.if').dataset.chrname = o.f.split('.')[0];
         }
-        telms[0].innerText = tArr[0];
-        telms[1].innerText = tArr[1];
-
-        doc.querySelector('#desc').innerText = data.d[1];
-        doc.querySelector('.if').dataset.chrname = data.f.split('.')[0];
-        let ip = `./asset/blue/bg/${data.f}`;
+        let ip = await this.client.reqMgr.megaMgr.downloadPromise(descPic, { type: `image/${descPic.name.split('.')[1]}` });
         doc.querySelector('img').src = ip;
+        console.log('descriptData', d);
+        console.log([
+            "image name : " + name.split('.')[0],
+            "image type : " + type + " (0 is bg, i is chr.)",
+            "image path(src) : " + ip
+        ].join('\n'));
+        if(this.callDone) setTimeout(()=>this.callDone(),4000)
     }
     strHTML2Elm(str) {
         let d = new DOMParser();

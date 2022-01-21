@@ -12,12 +12,13 @@
     }
 
     .loading.t1 .if[data-chrname=aris] .bg {
-        width: 45%;
+        width: 30%;
     }
 }
 
 @media (min-width: 1025px) {
     .loading.t1 .if[data-chrname=aris] .bg {
         max-width: unset !important;
+        width: 30% !important;
     }
 }

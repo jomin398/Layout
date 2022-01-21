@@ -70,6 +70,8 @@ var client;
         loader = {
             progress: null,
             quene: [],
+            finish:false,
+            resolveData:null,
             add: function (add) {
                 this.quene.push(add);
             },
@@ -84,14 +86,10 @@ var client;
                         if (this.progress) {
                             this.progress.progressUPdate((i + 1) / l.length * 100);
                         };
-                        this.onload(r);
+                        this.resolveData = r;
+                        this.finish = true;
                     }
                 }
-            },
-            onload: function (c) {
-                this.quene = [];
-                console.log('onload done.')
-                console.log(c);
             }
         };
         async onStart() {
@@ -170,9 +168,7 @@ var client;
 
             //req bg info.
             this.loader.add(async () => {
-                //random descript Select Num
-                const descSelNum = 0;
-                let d = await this.reqMgr.req('./asset/blue/bg/info.json');
+                // let d = await this.reqMgr.req('./asset/blue/bg/info.json');
 
                 //bg img array.
                 //filterout BG_View_
@@ -188,12 +184,21 @@ var client;
                 const descPic = pickone(this.asset.loaded.loadingPagePics);
                 const isbg = bgimgArr.map(e => e.name).includes(descPic.name);
                 const ischr = chrPrePicsArr.map(e => e.name).includes(descPic.name);
-                const name = (isbg ? descPic.name.toLowerCase().replace('bg_view_', '') : descPic.name).split('.')[0];
-                const type = isbg == true ? 0 : ischr == true ? 1 : -1;
-                console.log(name, type);
-                this.elmMgr.displayInfo(d, descSelNum);
+                const name = (isbg ? descPic.name.toLowerCase().replace('bg_view_', '') : descPic.name.toLowerCase());
+                const type = isbg == true ? 0 : ischr == true ? 1 : 0;
+                return [name, type, descPic];
             });
-
+            this.loader.add(async a=>{
+                let descfile = this.theme.data.children.find(e=>e.name.toLowerCase().match(/descriptdata/gm));
+                let d = await this.reqMgr.megaMgr.downloadPromise(descfile, { type: "text/plain" }).then(this.reqMgr.req);
+                return [d,a];
+            })
+            this.loader.add(d=>{
+                const a = d[1];
+                d[0]= JSON.parse(d[0].response.replace('][object Object]',']'));
+                this.elmMgr.callDone = this.onload.bind(this);
+                this.elmMgr.displayInfo(d[0][a[1]], a[0], a[1], a[2])
+            });
             this.loader.load();
             // let app = null;
 
@@ -214,6 +219,10 @@ var client;
             // text.text = 'download....';
             // text.updateText();
         };
+        onload(c) {
+            this.loader.quene = [];
+            console.log('onload done.');
+        }
     };
     client.init();
     return client;
