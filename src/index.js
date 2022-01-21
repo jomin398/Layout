@@ -1,5 +1,17 @@
 var client;
 (() => {
+    function shuffle(array) {
+        for (let index = array.length - 1; index > 0; index--) {
+            const randomPosition = Math.floor(Math.random() * (index + 1));
+            const temporary = array[index];
+            array[index] = array[randomPosition];
+            array[randomPosition] = temporary;
+        }
+        return array;
+    };
+    function pickone(arr) {
+        return arr[Math.floor(Math.random() * arr.length)]
+    }
     client = new class client {
         constructor() {
             this.app = null;
@@ -20,6 +32,7 @@ var client;
                     char: {
                         tree: null
                     },
+                    loadingPagePics: null,
                     loadingPage: null,
                     data: null,
                     audio: []
@@ -82,7 +95,7 @@ var client;
             }
         };
         async onStart() {
-            let n = Math.floor(Math.random() * 2);
+            // let n = Math.floor(Math.random() * 2);
 
             //load external AssetData 's metadata.;
             this.loader.add(async () => {
@@ -118,12 +131,6 @@ var client;
                 console.log(this.theme.data.children.filter(e => {
                     return noVoice ? e.name.toLowerCase() == 'characters' : e;
                 }));
-                //bg img array.
-                const bgimgArr = this.theme.data.children.filter(e => e.name.toLowerCase() == 'bgi' && e.parent.name == this.theme.name)[0].children.filter(e=>e.name.includes('BG_View'));
-                console.log(bgimgArr);
-                
-                //filterout BG_View_
-                // console.log(d.children[tnum].children.find(e=>e.name=="characters"));
             });
 
             //append loading page.
@@ -136,9 +143,8 @@ var client;
                 this.loader.progress = this.progressMgr;
                 this.asset.loaded.loadingPage = e;
                 this.display[1].append(e);
-                const tree = this.reqMgr.megaMgr.reTreeMaker(this.asset.loaded.data.tree, 'bgi', j => j);
-                console.log(tree)
             });
+
             //req sound.
             this.loader.add(async () => {
                 const tl = this.asset.loaded.data.children.map(e => e.name);
@@ -146,10 +152,11 @@ var client;
                 const soundarr = this.asset.loaded.data.children
                     .find(e => e.name == tl[1]).children
                     .find(e => e.name == 'sound').children;
-                const sflink = soundarr[n];
+                const sflink = pickone(soundarr);
                 let u = await this.reqMgr.megaMgr.downloadPromise(sflink, { type: "audio/ogg" });
                 this.asset.loaded.audio.push(u);
             });
+
             //append sound.
             this.loader.add(() => {
                 let u = this.asset.loaded.audio[0];
@@ -159,15 +166,33 @@ var client;
                     this.soundEl.play();
                 });
                 this.soundEl.load();
-            })
+            });
+
             //req bg info.
             this.loader.add(async () => {
                 //random descript Select Num
                 const descSelNum = 0;
                 let d = await this.reqMgr.req('./asset/blue/bg/info.json');
-                this.elmMgr.displayInfo(d, descSelNum);
-            })
 
+                //bg img array.
+                //filterout BG_View_
+                const bgimgArr = this.theme.data.children.filter(e => {
+                    return e.name.toLowerCase() == 'bgi' && e.parent.name == this.theme.name;
+                })[0].children.filter(e => e.name.includes('BG_View'));
+                // console.log(bgimgArr);
+                const chrPrePicsArr = this.theme.data.children.filter(e => {
+                    return e.name.toLowerCase() == 'chrprepics' && e.parent.name == this.theme.name;
+                })[0].children;
+                //merge then shuffle;
+                this.asset.loaded.loadingPagePics = shuffle(chrPrePicsArr.concat(bgimgArr));
+                const descPic = pickone(this.asset.loaded.loadingPagePics);
+                const isbg = bgimgArr.map(e => e.name).includes(descPic.name);
+                const ischr = chrPrePicsArr.map(e => e.name).includes(descPic.name);
+                const name = (isbg ? descPic.name.toLowerCase().replace('bg_view_', '') : descPic.name).split('.')[0];
+                const type = isbg == true ? 0 : ischr == true ? 1 : -1;
+                console.log(name, type);
+                this.elmMgr.displayInfo(d, descSelNum);
+            });
 
             this.loader.load();
             // let app = null;
