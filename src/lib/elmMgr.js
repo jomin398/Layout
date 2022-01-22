@@ -12,7 +12,7 @@ class elmMgr {
         this.client.display[1].querySelector('.left').insertAdjacentElement('afterend', a);
         a.insertAdjacentElement('afterbegin', b);
     }
-    async displayInfo(d, name, type, descPic) {
+    async displayInfo(d, name, type, imageUrl) {
         console.log(this)
         // const e = JSON.parse(d.response);
         let doc = this.client.asset.loaded.loadingPage;
@@ -41,13 +41,12 @@ class elmMgr {
             doc.querySelector('#desc').innerText = o.d[1];
             if (type == 1) doc.querySelector('.if').dataset.chrname = o.f.split('.')[0];
         }
-        let ip = await this.client.reqMgr.megaMgr.downloadPromise(descPic, { type: `image/${descPic.name.split('.')[1]}` });
-        doc.querySelector('img').src = ip;
+        doc.querySelector('img').src = imageUrl;
         console.log('descriptData', d);
         console.log([
             "image name : " + name.split('.')[0],
             "image type : " + type + " (0 is bg, i is chr.)",
-            "image path(src) : " + ip
+            "image path(src) : " + imageUrl
         ].join('\n'));
         if(this.callDone) setTimeout(()=>this.callDone(),4000)
     }
