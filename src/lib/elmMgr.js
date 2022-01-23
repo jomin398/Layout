@@ -40,6 +40,12 @@ class elmMgr {
             telms[1].innerText = tArr ? tArr[1] : '';
             doc.querySelector('#desc').innerText = o.d[1];
             if (type == 1) doc.querySelector('.if').dataset.chrname = o.f.split('.')[0];
+        } else {
+            console.log('Create temporary data from a given picture name', name);
+            tArr = ['[Temporary]', name.split('.')[0]];
+            telms[0].innerText = tArr ? tArr[0] : '';
+            telms[1].innerText = tArr ? tArr[1] : '';
+            // doc.querySelector('#desc').innerText = o.d[1];
         }
         doc.querySelector('img').src = imageUrl;
         console.log('descriptData', d);
@@ -48,7 +54,7 @@ class elmMgr {
             "image type : " + type + " (0 is bg, i is chr.)",
             "image path(src) : " + imageUrl
         ].join('\n'));
-        if(this.callDone) setTimeout(()=>this.callDone(),4000)
+        if (this.callDone) setTimeout(() => this.callDone(), 4000)
     }
     strHTML2Elm(str) {
         let d = new DOMParser();

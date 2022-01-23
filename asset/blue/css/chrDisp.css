@@ -17,8 +17,8 @@
 }
 
 @media (min-width: 1025px) {
-    .loading.t1 .if[data-chrname=aris] .bg {
+    /* .loading.t1 .if[data-chrname=aris] .bg {
         max-width: unset !important;
         width: 30% !important;
-    }
+    } */
 }

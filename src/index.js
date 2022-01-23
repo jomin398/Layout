@@ -9,6 +9,9 @@ var client;
         }
         return array;
     };
+    function sleep(ms) {
+        return new Promise((r) => setTimeout(r, ms));
+    }
     function pickone(arr) {
         return arr[Math.floor(Math.random() * arr.length)]
     }
@@ -68,12 +71,12 @@ var client;
             };
         };
         loader = {
-            client:null,
+            client: null,
             progress: null,
             quene: [],
             finish: false,
             resolveData: null,
-            init:function(client){
+            init: function (client) {
                 this.client = client;
             },
             add: function (add) {
@@ -84,11 +87,12 @@ var client;
                 for (let i = 0, l = this.quene, n = l.length - 1; i < n + 1; i++) {
                     r = await l[i](r);
                     if (this.progress) {
-                        this.progress.progressUPdate((i / l.length) * 100);
+                        console.log(`program ${i + 1} done.`)
+                        this.progress.progressUPdate((i / l.length) * 100, true);
                     };
                     if (i == n) {
                         if (this.progress) {
-                            this.progress.progressUPdate((i + 1) / l.length * 100);
+                            this.progress.progressUPdate((i + 1) / l.length * 100, true);
                         };
                         this.resolveData = r;
                         this.finish = true;
@@ -97,34 +101,39 @@ var client;
                 }
             }
         };
+        async dumyLongLoad() {
+            await sleep(10000);
+            console.log('done')
+            return;
+        }
         onStart() {
             const funcs = {
-                assetMetaLoader:async () => {
+                assetMetaLoader: async () => {
                     const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
                     let d = await this.reqMgr.megaMgr.req(assetLink);
                     console.log(d)
                     this.asset.loaded.data = d;
                 },
-                assetMetaParse:() => {
+                assetMetaParse: () => {
                     //Make chr Tree;
                     const searchWorld = 'characters';
                     const tree = this.reqMgr.megaMgr.reTreeMaker(this.asset.loaded.data.tree, searchWorld, j => j.replace('.zip', ''));
                     console.log(tree)
                     this.asset.loaded.char.tree = tree.t;
-    
+
                     const chrTree = this.asset.loaded.char.tree;
                     const tnum = this.theme.no;
                     const noVoice = this.theme.noVoice;
                     this.theme.data = this.asset.loaded.data.children[tnum];
                     this.theme.name = this.theme.data.name;
-    
+
                     // console.log(o);
                     let stds = [];
                     Object.keys(chrTree).map(e => stds = stds.concat(chrTree[e]));
                     let stdCt = stds.length;
                     console.log(stds)
                     console.log(`sum of all students.. they are ${stdCt} students.`)
-    
+
                     //select blue;
                     console.log(`Theme is ${this.theme.name}`)
                     console.log('student list', chrTree[Object.keys(chrTree)[tnum]])
@@ -132,7 +141,7 @@ var client;
                         return noVoice ? e.name.toLowerCase() == 'characters' : e;
                     }));
                 },
-                pageDomLoader:async () => {
+                pageDomLoader: async () => {
                     //including loadingBar from external html file;
                     let d = await this.reqMgr.req(`./asset/blue/loading.html`);
                     let e = this.elmMgr.strHTML2Elm(d.response);
@@ -142,9 +151,9 @@ var client;
                     this.asset.loaded.loadingPage = e;
                     this.display[1].append(e);
                 },
-                bgLoader0:async () => {
+                bgLoader0: async () => {
                     // let d = await this.reqMgr.req('./asset/blue/bg/info.json');
-    
+
                     //bg img array.
                     //filterout BG_View_
                     const bgimgArr = this.theme.data.children.filter(e => {
@@ -163,21 +172,21 @@ var client;
                     const type = isbg == true ? 0 : ischr == true ? 1 : 0;
                     return [name, type, descPic];
                 },
-                bgLoader1:async a => {
+                bgLoader1: async a => {
                     let link = await this.reqMgr.megaMgr.downloadPromise(a[2], { type: `image/${a[2].name.split('.')[1]}` });
                     return [a[0], a[1], link];
                 },
-                bgLoader2:async a => {
+                bgLoader2: async a => {
                     let d = await this.reqMgr.req(`./asset/${this.theme.name.toLowerCase().substring(0, 4)}/descriptData.json`);
                     return [d, a];
                 },
-                bgLoader3:d => {
+                bgLoader3: d => {
                     const a = d[1];
                     d[0] = JSON.parse(d[0].response.replace('][object Object]', ']'));
                     // this.elmMgr.callDone = this.onload.bind(this);
                     this.elmMgr.displayInfo(d[0][a[1]], a[0], a[1], a[2])
                 },
-                reqSound:async () => {
+                reqSound: async () => {
                     const tl = this.asset.loaded.data.children.map(e => e.name);
                     // const tree = this.reqMgr.megaMgr.reTreeMaker(this.asset.loaded.data.tree, 'sound', j => j);
                     const soundarr = this.asset.loaded.data.children
@@ -187,7 +196,7 @@ var client;
                     let u = await this.reqMgr.megaMgr.downloadPromise(sflink, { type: "audio/ogg" });
                     this.asset.loaded.audio.push(u);
                 },
-                appendSound:() => {
+                appendSound: () => {
                     let u = this.asset.loaded.audio[0];
                     this.soundEl.src = u;
                     this.soundEl.addEventListener("load", function () {
@@ -205,16 +214,17 @@ var client;
 
             //append loading page.
             this.loader.add(funcs.pageDomLoader);
- 
+
             //req sound. append sound.
             this.loader.add(funcs.reqSound);
             this.loader.add(funcs.appendSound);
-            
+
             //req bg info.
             this.loader.add(funcs.bgLoader0);
             this.loader.add(funcs.bgLoader1);
             this.loader.add(funcs.bgLoader2);
             this.loader.add(funcs.bgLoader3);
+            this.loader.add(this.dumyLongLoad);
             this.loader.load();
             // let app = null;
 

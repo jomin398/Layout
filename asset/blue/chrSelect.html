@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+        }
+
+        .cc {
+            margin: auto;
+            border: 2px solid white;
+        }
+
+        .fw {
+            width: auto;
+            overflow: auto;
+            max-height: 300px;
+            display: flex;
+            align-items: center;
+            /* max-height: inherit; */
+            justify-content: space-around;
+        }
+
+        .fc {
+            max-height: inherit;
+            position: relative;
+            display: block;
+        }
+
+        .fc .fd {
+            top: 50%;
+            bottom: auto;
+            left: 10%;
+            right: 15%;
+            height: 130px;
+            background-color: #ffffffb8;
+            position: absolute;
+            color: black;
+            z-index: 1;
+            display: flex;
+            align-items: flex-start;
+            flex-direction: row-reverse;
+            padding: 5px;
+            overflow: auto;
+            border-radius: 10px;
+        }
+
+        .fd span {
+            display: inline;
+            writing-mode: vertical-rl;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .fd span:first-child {
+            font-size: 1.1rem;
+            font-weight: bolder;
+        }
+
+        .fc img {
+            max-width: 150px;
+            max-height: inherit;
+            overflow: hidden;
+            /* position: absolute;
+            z-index: 0; */
+        }
+
+        @media screen and (min-width: 320px) and (max-width: 480px) {
+            .fw {
+                justify-content: unset !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cc">
+        <div class="fw">
+            <div class="fc">
+                <img src="./chrPre/aris.png" alt="aris">
+                <div class="fd">
+                    <span>텐도 아리스</span>
+                    <span>게임동아리</span>
+                </div>
+            </div>
+            <div class="fc">
+                <img src="./chrPre/arona.png" alt="arona">
+                <div class="fd">
+                    <span>아로나</span>
+                </div>
+            </div>
+            <div class="fc">
+                <img src="./chrPre/miku.png" alt="miku">
+                <div class="fd">
+                    <span>하츠네 미쿠</span>
+                    <span>보컬로이드</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
