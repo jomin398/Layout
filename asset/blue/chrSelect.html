@@ -2,13 +2,14 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <style>
         body {
-            background-color: black;
+            /* background-color: black; */
+            background: black;
             color: white;
         }
 
@@ -17,6 +18,7 @@
             margin: auto;
             border: 2px solid white;
             width: 100%;
+            overflow: hidden;
         }
 
         .fw {
@@ -108,35 +110,60 @@
                 justify-content: unset !important;
             }
         }
+
+        @media (prefers-color-scheme: light) {
+            body {
+                background: linear-gradient(#2596be, 40%, #ece7f3);
+            }
+
+            .question {
+                background: linear-gradient(#2596be, 40%, #ece7f3);
+            }
+        }
     </style>
     <script>
         window.onload = () => {
             //display info;
             const themeN = 0;
             const themeT = ["선생이라면", "주인님이라면", "마스터라면"][themeN];
-            const qElm = document.querySelector('.question');
-            qElm.append((() => {
-                let p = document.createElement('p');
-                p.innerText = `${themeT} 어떤 아이를 선택하실건가요?`;
-                return p;
-            })())
+            const qElm = document.querySelector(".question");
+            const ccElm = document.querySelector(".cc");
 
+            /**
+             * character continer Click handller
+             * @param ev event
+             */
+            const ccCkh = function (ev) {
+                let t = ev.target.alt;
+                //click reroute;
+                if (!t) t = ev.target.parentNode.firstElementChild.alt;
+                if (!t) t = ev.target.parentNode.parentNode.firstElementChild.alt;
+                if (!t) t = ev.target.firstElementChild.alt;
+                if (!t) t = null;
+                console.log(t);
+            }
+            qElm.append(
+                (() => {
+                    let p = document.createElement("p");
+                    p.innerText = `${themeT} 어떤 아이를 선택하실건가요?`;
+                    return p;
+                })()
+            );
+            ccElm.querySelector('.fw').childNodes.forEach(e => e.onclick = ccCkh);
             setTimeout(() => {
-                qElm.style.display = 'none';
-                qElm.removeChild(qElm.firstChild)
-                document.querySelector('.cc').style.display = 'block';
+                qElm.style.display = "none";
+                ccElm.style.display = "block";
             }, 3000);
-        }
+        };
     </script>
 </head>
 
 <body>
-    <div class="question">
-    </div>
+    <div class="question"></div>
     <div class="cc">
         <div class="fw">
             <div class="fc">
-                <img src="./chrPre/arona.png" alt="arona">
+                <img src="./chrPre/arona.png" alt="arona" />
                 <div class="fd right">
                     <span>아로나</span>
                     <span>연방수사부 샬레</span>
@@ -144,7 +171,7 @@
                 </div>
             </div>
             <div class="fc">
-                <img src="./chrPre/aris.png" alt="aris">
+                <img src="./chrPre/aris.png" alt="aris" />
                 <div class="fd">
                     <span>텐도 아리스</span>
                     <span>게임동아리</span>
@@ -153,7 +180,7 @@
             </div>
 
             <div class="fc">
-                <img src="./chrPre/miku.png" alt="miku">
+                <img src="./chrPre/miku.png" alt="miku" />
                 <div class="fd">
                     <span>하츠네 미쿠</span>
                     <span>보컬로이드</span>
@@ -161,7 +188,7 @@
                 </div>
             </div>
             <div class="fc">
-                <img src="./chrPre/mutsuki.png" alt="mutsuki">
+                <img src="./chrPre/mutsuki.png" alt="mutsuki" />
                 <div class="fd">
                     <span>아사기 무츠키</span>
                     <span>흥신소 68</span>
