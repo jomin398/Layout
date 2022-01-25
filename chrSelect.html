@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+  <title>Document</title>
+  <style>
+    body {
+      /* background-color: black; */
+      background: black;
+      color: white;
+    }
+
+    .cc {
+      display: none;
+      margin: auto;
+      border: 2px solid white;
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .fw {
+      padding: 10px;
+      width: 100%;
+      overflow: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 285px;
+      max-height: 285px;
+      position: relative;
+    }
+
+    .fc {
+      max-height: inherit;
+      min-height: inherit;
+      min-width: 250px;
+      position: relative;
+      display: block;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .fc:nth-child(even) {
+      margin: 0 10px;
+    }
+
+    .question {
+      display: flex;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .question p {
+      text-align: center;
+      font-weight: bolder;
+      font-size: 1.1rem;
+      animation: 1.5s tFadeIn ease-in;
+    }
+
+    .fc .fd {
+      width: auto;
+      background-color: #ffffff58;
+      position: absolute;
+      color: black;
+      z-index: 1;
+      display: flex;
+      align-items: flex-start;
+      flex-direction: row-reverse;
+      padding: 5px;
+      overflow: auto;
+      border-radius: 10px;
+      top: 0;
+    }
+
+    .fc .fd.right {
+      right: 0;
+    }
+
+    .fd span {
+      display: inline;
+      writing-mode: vertical-rl;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .fd span:first-child {
+      font-size: 1.1rem;
+      font-weight: bolder;
+    }
+
+    .fc img {
+      max-height: inherit;
+      overflow: hidden;
+      /* position: absolute;
+            z-index: 0; */
+    }
+
+    .fc img[alt="aris"] {
+      margin: 0;
+    }
+
+    .fc img[alt="mutsuki"] {
+      max-height: unset;
+      margin: -20px 0 0 -4px;
+    }
+
+    .btn.wrapper {
+      display: flex;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      text-align: center;
+      align-items: center;
+    }
+
+    .btn.wrapper.left {
+      left: 0;
+    }
+
+    .btn.wrapper.right {
+      right: 0;
+    }
+
+    .btn--left,
+    .btn--right {
+      z-index: 15;
+      width: 50px;
+      height: 50px;
+      border-radius: 35px;
+      background-color: #ffffff59;
+      border-color: #ffffff59;
+      margin-top: 100%;
+      cursor: pointer;
+      /* opacity: .6; */
+      border-style: unset;
+    }
+
+    /*
+    .modal-btn--prev{
+      position: absolute;
+      left: 0;
+      top:0;
+      bottom: 0;
+    }
+    .modal-btn--next {
+      position: absolute;
+      right: 0;
+      top:0;
+      bottom: 0;
+    }*/
+    .btn--left i,
+    .btn--right i {
+      font-weight: bolder;
+      font-size: 1.1rem;
+    }
+
+
+    @media screen and (min-width: 320px) and (max-width: 480px) {
+      .fw {
+        justify-content: unset !important;
+      }
+    }
+
+    @media (prefers-color-scheme: light) {
+      body {
+        background: linear-gradient(#2596be, 40%, #ece7f3) no-repeat black;
+      }
+
+      .question {
+        background: linear-gradient(#2596be, 40%, #ece7f3);
+      }
+    }
+
+    @keyframes tFadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+  <script>
+    const chrPreviewData = {
+      bluearchive: {
+        f: './asset/blue/chrPre',
+        fn: 'blue',
+        d: {
+          arona: {
+            n: ['Arona', '아로나'],
+            u: [null, '연방수사부 샬레'],
+            cv: [null, '코하라 코노미']
+          },
+          aris: {
+            n: ['Tendo Aris', '텐도 아리스'],
+            u: [null, '게임동아리'],
+            cv: [null, '타나카 미나미']
+          },
+          mutsuki: {
+            n: ['Asagi Mutsuki', '아사기 무츠키'],
+            u: [null, '흥신소 68'],
+            cv: [null, '오오쿠보 루미']
+          },
+          miku:{
+            n: ['Hatsune Miku', '하츠네 미쿠'],
+            u: [null, '보컬로이드'],
+            cv: [null, '후지타 사키']
+          }
+        }
+      },
+      ifree: {
+        f: './asset/ifree/chrPre',
+        fn: 'ifree',
+        d: {
+          inari: {
+            n: ['Inari', '이나리'],
+          },
+          orlaya: {
+            n: ['Orlaya', '오를레아'],
+          },
+          reiki: {
+            n: ['Reiki', '레이키'],
+          }
+        }
+      }
+    };
+    window.onload = () => {
+      //display info;
+      const themeN = 0;
+      const langNo = 1;
+      let themeSN = 0;
+      let themeSL = 1;
+      const themeT = ["선생이라면 ", "주인님이라면 ", "마스터라면 "][themeN];
+      const qElm = document.querySelector(".question");
+      const ccElm = document.querySelector(".cc");
+
+      /**
+       * character continer Click handller
+       * @param ev event
+       */
+      const ccCkh = function (ev) {
+        let t = ev.target.alt;
+        //click reroute;
+        if (!t) t = ev.target.parentNode.firstElementChild.alt;
+        if (!t) t = ev.target.parentNode.parentNode.firstElementChild.alt;
+        if (!t) t = ev.target.firstElementChild.alt;
+        if (!t) t = null;
+        console.log(t);
+      };
+
+      const tselNext = (ev) => {
+        if (themeSN < themeSL) {
+          themeSN++;
+        };
+        console.log(themeSN);
+        console.log(ev.target.parentNode.className);
+      };
+      const tselPrev = (ev) => {
+        if (themeSN > 0) {
+          themeSN--;
+        };
+        console.log(themeSN);
+        console.log(ev.target.parentNode.className);
+      };
+      const btnCkhl = [
+        tselPrev,
+        tselNext
+      ];
+      qElm.append(
+        (() => {
+          let p = document.createElement("p");
+          p.innerText = `${themeT}어떤 아이를 선택하실건가요?`;
+          return p;
+        })()
+      );
+      let sel = chrPreviewData['bluearchive'];
+      Object.keys(sel.d).map(e => {
+        const elm = document.createElement('div');
+        elm.className = 'fc';
+        const d = sel.d[e];
+        if (d.p) elm.classList.add(d.p);
+
+        const img = document.createElement('img');
+        img.src = `${sel.f}/${e}.png`;
+        img.alt = e;
+        const desc = (() => {
+          let r = document.createElement('div');
+          r.className = 'fd';
+          for (let i =0,a = ['n', 'u', 'cv'];i<a.length;i++) {
+            r.appendChild((() => {
+              let s = document.createElement('span');
+              console.log(d[a[i]])
+              s.innerText = i != 'cv' ? (d[a[i]] ? d[i] : `CV : ${d[i]}`) : '';
+              return s;
+            })())
+          };
+          return r;
+        })();
+
+        elm.append(img, desc)
+        ccElm.querySelector('.fw').append(elm);
+      })
+      // ccElm.querySelector('.fw').childNodes.forEach(e => e.onclick = ccCkh);
+      ccElm.querySelectorAll('.btn.wrapper button i').forEach((e, i) => e.onclick = btnCkhl[i]);
+      setTimeout(() => {
+        qElm.style.display = "none";
+        ccElm.style.display = "block";
+      }, 3000);
+    };
+  </script>
+</head>
+
+<body>
+  <div class="question"></div>
+  <div class="cc">
+    <div class="btn wrapper left">
+      <button class="btn--left">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+    </div>
+    <div class="fw">
+    </div>
+    <div class="btn wrapper right">
+      <button class="btn--right">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</body>
+
+</html>
