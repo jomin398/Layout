@@ -51,6 +51,7 @@
 
     .question {
       display: flex;
+      flex-direction: column;
       position: absolute;
       top: 0;
       left: 0;
@@ -181,6 +182,16 @@
       }
     }
 
+    @media (prefers-color-scheme: dark) {
+      body {
+        color: #ffffff;
+      }
+
+      .fc .fd {
+        color: #ffffff;
+      }
+    }
+
     @keyframes tFadeIn {
       from {
         opacity: 0;
@@ -196,6 +207,7 @@
       bluearchive: {
         f: './asset/blue/chrPre',
         fn: 'blue',
+        kn: "블루 아카이브",
         d: {
           arona: {
             n: ['Arona', '아로나'],
@@ -222,6 +234,7 @@
       ifree: {
         f: './asset/ifree/chrPre',
         fn: 'ifree',
+        kn: "아이들 프린세스",
         d: {
           inari: {
             n: ['Inari', '이나리'],
@@ -242,7 +255,7 @@
       //display info;
       const themeN = 0;
       const langNo = 1;
-      let themeSN = 1;
+      let themeSN = 0;
       let themeSL = 1;
       let key = Object.keys(chrPreviewData);
       const themeT = ["선생이라면 ", "주인님이라면 ", "마스터라면 "][themeN];
@@ -253,35 +266,78 @@
        * character continer Click handller
        * @param ev event
        */
-      const ccCkh = function(ev) {
+      const ccCkh = function (ev, k) {
         let t = ev.target.alt;
         //click reroute;
         if (!t) t = ev.target.parentNode.firstElementChild.alt;
         if (!t) t = ev.target.parentNode.parentNode.firstElementChild.alt;
         if (!t) t = ev.target.firstElementChild.alt;
         if (!t) t = null;
-        console.log(t);
+        // console.log(t);
+        if (ccElm) ccElm.style.display = "none";
+        if (qElm) {
+          qElm.style.display = "flex";
+          qElm.querySelector('p').innerText = questionDesc(false, k.d[t].n[langNo]);
+          qElm.append((() => {
+            let y = document.createElement('p');
+            y.className = 'choose';
+            y.innerText = ['Yes', '네'][langNo];
+            y.onclick = () => {
+              qElm.querySelectorAll('p').forEach((e, i) => qElm.removeChild(e));
+              console.log(t, k.d[t].n[langNo])
+            };
+            return y;
+          })(), (() => {
+            let n = document.createElement('p');
+            n.className = 'choose';
+            n.innerText = ['No', '아니요'][langNo];
+            n.onclick = () => {
+              qElm.style.display = "none";
+              //qElm.querySelectorAll('p').forEach((e, i) => qElm.removeChild(e));
+              // qElm.querySelector('p').innerText = questionDesc(true, k.kn, themeT);
+
+              // ccElm.style.display = "none";
+              cycle(key[themeSN]);
+            };
+            return n;
+          })())
+        }
       };
 
       const tselNext = (ev) => {
         if (themeSN < themeSL) {
           themeSN++;
         };
-        console.log(themeSN);
-        console.log(ev.target.parentNode.className);
+        // console.log(themeSN);
+        // console.log(ev.target.parentNode.className);
+        cycle(key[themeSN]);
       };
       const tselPrev = (ev) => {
         if (themeSN > 0) {
           themeSN--;
         };
-        console.log(themeSN);
-        console.log(ev.target.parentNode.className);
+        // console.log(themeSN);
+        // console.log(ev.target.parentNode.className);
+        cycle(key[themeSN]);
       };
       const btnCkhl = [
         tselPrev,
         tselNext
       ];
-      const listView = function(sel) {
+      
+      /**
+       * @param {boolean} i init?
+       * @param {string} t title/name
+       * @param {string} y player prefix;
+       * @returns {string} string.
+      */
+      const questionDesc = (i, t, y) => {
+        return (i ? `${t}에서
+            ${y}어떤 아이를` : `${t}를(을)`) + " 선택하실건가요?";
+      }; // chrPreviewData[k].kn ,themeT 
+
+      const listView = function (sel) {
+        console.log(sel)
         Object.keys(sel.d).map(e => {
           const elm = document.createElement('div');
           elm.className = 'fc';
@@ -309,24 +365,29 @@
           ccElm.querySelector('.fw').append(elm);
         });
       };
-      const cycle = function(n) {
+      const cycle = function (k) {
+        ccElm.style.display = "none";
+        console.log('load')
+        qElm.querySelectorAll('p').forEach((e, i) => qElm.removeChild(e));
         qElm.append(
           (() => {
             let p = document.createElement("p");
-            p.innerText = `${['블루아카이브','아이프리'][n]}에서
-            ${themeT}어떤 아이를 선택하실건가요?`;
+            p.innerText = questionDesc(true, chrPreviewData[k].kn, themeT);
             return p;
           })()
         );
-        listView(chrPreviewData[key[n]]);
-        ccElm.querySelector('.fw').childNodes.forEach(e => e.onclick = ccCkh);
+        qElm.style.display = "flex";
+        ccElm.querySelectorAll('.fw .fc').forEach(e =>
+          ccElm.querySelector('.fw').removeChild(e));
+        listView(chrPreviewData[k]);
+        ccElm.querySelector('.fw').childNodes.forEach(e => e.onclick = (ev) => ccCkh(ev, chrPreviewData[k]));
         ccElm.querySelectorAll('.btn.wrapper button i').forEach((e, i) => e.onclick = btnCkhl[i]);
         setTimeout(() => {
           qElm.style.display = "none";
           ccElm.style.display = "block";
         }, 3000);
       };
-      cycle(0);
+      cycle(key[themeSN]);
     };
   </script>
 </head>
