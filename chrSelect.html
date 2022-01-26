@@ -212,7 +212,7 @@
             u: [null, '흥신소 68'],
             cv: [null, '오오쿠보 루미']
           },
-          miku:{
+          miku: {
             n: ['Hatsune Miku', '하츠네 미쿠'],
             u: [null, '보컬로이드'],
             cv: [null, '후지타 사키']
@@ -225,12 +225,15 @@
         d: {
           inari: {
             n: ['Inari', '이나리'],
+            cv: [null, "샤모토 하루카", "社本悠"]
           },
           orlaya: {
             n: ['Orlaya', '오를레아'],
+            cv: [null, "사토 사토미", "佐藤 聡美"]
           },
           reiki: {
             n: ['Reiki', '레이키'],
+            cv: [null, "시오이리 아스카", "汐入 あすか"]
           }
         }
       }
@@ -239,8 +242,9 @@
       //display info;
       const themeN = 0;
       const langNo = 1;
-      let themeSN = 0;
+      let themeSN = 1;
       let themeSL = 1;
+      let key = Object.keys(chrPreviewData);
       const themeT = ["선생이라면 ", "주인님이라면 ", "마스터라면 "][themeN];
       const qElm = document.querySelector(".question");
       const ccElm = document.querySelector(".cc");
@@ -249,7 +253,7 @@
        * character continer Click handller
        * @param ev event
        */
-      const ccCkh = function (ev) {
+      const ccCkh = function(ev) {
         let t = ev.target.alt;
         //click reroute;
         if (!t) t = ev.target.parentNode.firstElementChild.alt;
@@ -277,46 +281,52 @@
         tselPrev,
         tselNext
       ];
-      qElm.append(
-        (() => {
-          let p = document.createElement("p");
-          p.innerText = `${themeT}어떤 아이를 선택하실건가요?`;
-          return p;
-        })()
-      );
-      let sel = chrPreviewData['bluearchive'];
-      Object.keys(sel.d).map(e => {
-        const elm = document.createElement('div');
-        elm.className = 'fc';
-        const d = sel.d[e];
-        if (d.p) elm.classList.add(d.p);
+      const listView = function(sel) {
+        Object.keys(sel.d).map(e => {
+          const elm = document.createElement('div');
+          elm.className = 'fc';
+          const d = sel.d[e];
+          if (d.p) elm.classList.add(d.p);
 
-        const img = document.createElement('img');
-        img.src = `${sel.f}/${e}.png`;
-        img.alt = e;
-        const desc = (() => {
-          let r = document.createElement('div');
-          r.className = 'fd';
-          for (let i =0,a = ['n', 'u', 'cv'];i<a.length;i++) {
-            r.appendChild((() => {
-              let s = document.createElement('span');
-              console.log(d[a[i]])
-              s.innerText = i != 'cv' ? (d[a[i]] ? d[i] : `CV : ${d[i]}`) : '';
-              return s;
-            })())
-          };
-          return r;
-        })();
+          const img = document.createElement('img');
+          img.src = `${sel.f}/${e}.png`;
+          img.alt = e;
+          const desc = (() => {
+            let r = document.createElement('div');
+            r.className = 'fd';
+            for (let i = 0, a = ['n', 'u', 'cv']; i < a.length; i++) {
+              r.appendChild((() => {
+                let s = document.createElement('span');
+                s.innerText = '';
+                if (d[a[i]]) s.innerText = i != 2 ? d[a[i]][langNo] : `CV : ${d[a[i]][langNo]}`;
+                return s;
+              })())
+            };
+            return r;
+          })();
 
-        elm.append(img, desc)
-        ccElm.querySelector('.fw').append(elm);
-      })
-      // ccElm.querySelector('.fw').childNodes.forEach(e => e.onclick = ccCkh);
-      ccElm.querySelectorAll('.btn.wrapper button i').forEach((e, i) => e.onclick = btnCkhl[i]);
-      setTimeout(() => {
-        qElm.style.display = "none";
-        ccElm.style.display = "block";
-      }, 3000);
+          elm.append(img, desc)
+          ccElm.querySelector('.fw').append(elm);
+        });
+      };
+      const cycle = function(n) {
+        qElm.append(
+          (() => {
+            let p = document.createElement("p");
+            p.innerText = `${['블루아카이브','아이프리'][n]}에서
+            ${themeT}어떤 아이를 선택하실건가요?`;
+            return p;
+          })()
+        );
+        listView(chrPreviewData[key[n]]);
+        ccElm.querySelector('.fw').childNodes.forEach(e => e.onclick = ccCkh);
+        ccElm.querySelectorAll('.btn.wrapper button i').forEach((e, i) => e.onclick = btnCkhl[i]);
+        setTimeout(() => {
+          qElm.style.display = "none";
+          ccElm.style.display = "block";
+        }, 3000);
+      };
+      cycle(0);
     };
   </script>
 </head>
