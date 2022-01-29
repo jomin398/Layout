@@ -1,5 +1,5 @@
 class ChrSelectMgr {
-    constructor() {
+    constructor(langNo) {
         this.requester = new requester();
         this.theme = {
             no: 0,
@@ -14,18 +14,20 @@ class ChrSelectMgr {
         this.gui = {
             elms: [],
             keys: [],
-            keyFns: []
+            keyFns: [],
+            langNo: langNo
         },
-        this.onSelect = console.log; //default callBack.
+            this.onSelect = console.log; //default callBack.
     };
     getThemeText() {
         return this.theme.textList[this.theme.no];
     };
     init(elms) {
+
         this.gui.elms = elms;
         return new Promise(async function (resolve, reject) {
             this.dataRaw = await this.requester.req('./json/chrPreviewData.json').then(xhr => JSON.parse(xhr.response));
-            this.theme.textList = this.dataRaw[0].tt[langNo];
+            this.theme.textList = this.dataRaw[0].tt[this.gui.langNo];
             this.theme.db = this.dataRaw[1];
             this.theme.selKeys = Object.keys(this.theme.db);
             this._view();
@@ -40,8 +42,14 @@ class ChrSelectMgr {
     * @returns {string} string.
     */
     questionDesc(i, t, y) {
-        return (i ? `${t}에서
-          ${y}어떤 아이를` : `${t}를(을)`) + " 선택하실건가요?";
+        if (this.gui.langNo == 1) {
+            return (i ? `${t}에서
+          ${y}어떤 아이를` : `${Josa(t,'을')}`) + " 선택하실건가요?";
+        } else {
+            i ? `if you as ${y},
+            Who are you going to choose? from ${t}` : `Are you Sure to choose
+            ${t}?`;
+        }
     };
     cycle() {
         const qElm = this.gui.elms[0];
@@ -85,20 +93,20 @@ class ChrSelectMgr {
             if (ccElm) ccElm.style.display = "none";
             if (qElm) {
                 qElm.style.display = "flex";
-                qElm.querySelector('p').innerText = this.questionDesc(false, d.d[t].n[langNo]);
+                qElm.querySelector('p').innerText = this.questionDesc(false, d.d[t].n[this.gui.langNo]);
                 qElm.append((() => {
                     let y = document.createElement('p');
                     y.className = 'choose';
-                    y.innerText = ['Yes', '네'][langNo];
+                    y.innerText = ['Yes', '네'][this.gui.langNo];
                     y.onclick = () => {
                         qElm.querySelectorAll('p').forEach((e, i) => qElm.removeChild(e));
-                        this.onSelect(t, d.d[t].n[langNo], this.theme.key, this.theme.db[this.theme.key].kn)
+                        this.onSelect(t, d.d[t].n[this.gui.langNo], this.theme.key, this.theme.db[this.theme.key].kn)
                     };
                     return y;
                 })(), (() => {
                     let n = document.createElement('p');
                     n.className = 'choose';
-                    n.innerText = ['No', '아니요'][langNo];
+                    n.innerText = ['No', '아니요'][this.gui.langNo];
                     n.onclick = () => {
                         qElm.style.display = "none";
                         //qElm.querySelectorAll('p').forEach((e, i) => qElm.removeChild(e));
@@ -143,7 +151,7 @@ class ChrSelectMgr {
                     r.appendChild((() => {
                         let s = document.createElement('span');
                         s.innerText = '';
-                        if (d[a[i]]) s.innerText = i != 2 ? d[a[i]][langNo] : `CV : ${d[a[i]][langNo]}`;
+                        if (d[a[i]]) s.innerText = i != 2 ? d[a[i]][this.gui.langNo] : `CV : ${d[a[i]][this.gui.langNo]}`;
                         return s;
                     })())
                 };

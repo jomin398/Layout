@@ -11,13 +11,14 @@
   <link rel="stylesheet" href="./css/chrSelect.css">
   <script src="./src/lib/ClickEventRouther/index.js"></script>
   <script src="./src/lib/reqManager/index.js"></script>
+  <script src="./src/lib/hangulJosa/index.js"></script>
   <script src="./src/lib/ChrSelectMgr/index.js"></script>
   <script>
     let gdMgr = null, megaManager = null;
     const langNo = 1;
 
     window.onload = () => {
-      const chrSelect = new ChrSelectMgr();
+      const chrSelect = new ChrSelectMgr(langNo);
       chrSelect.init([document.querySelector(".question"), document.querySelector(".cc")])
       chrSelect.onSelect = (...args) => console.log(args);
     };

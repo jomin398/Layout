@@ -1,7 +1,19 @@
+html {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
 body {
-    /* background-color: black; */
     background: black;
     color: white;
+    margin: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .cc {
@@ -80,20 +92,17 @@ body {
 .fd span {
     display: inline;
     writing-mode: vertical-rl;
-    font-weight: bold;
+    font-weight: bolder;
     font-size: 1rem;
 }
 
 .fd span:first-child {
     font-size: 1.1rem;
-    font-weight: bolder;
 }
 
 .fc img {
     max-height: inherit;
     overflow: hidden;
-    /* position: absolute;
-          z-index: 0; */
 }
 
 .fc img[alt="aris"] {
@@ -144,8 +153,25 @@ body {
 
 
 @media screen and (min-width: 320px) and (max-width: 480px) {
+    body {
+        display: block;
+    }
+
     .fw {
         justify-content: unset !important;
+    }
+}
+
+
+@media (min-width: 1025px) {
+    .fw {
+        min-height: 400px;
+        max-height: 400px;
+    }
+
+    .fc img[alt="mutsuki"] {
+        margin: -35px 0 0 -26px;
+        width: 400px;
     }
 }
 
@@ -167,7 +193,13 @@ body {
     .fc .fd {
         color: #ffffff;
     }
+
+    .fd span:first-child {
+        -webkit-text-stroke: 0.3px white;
+    }
 }
+
+
 
 @keyframes tFadeIn {
     from {
