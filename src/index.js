@@ -21,6 +21,7 @@ var client;
             this.doc = null;
             this.elmMgr = new elmMgr();
             this.reqMgr = new requester();
+            this.megaMgr = new megaManager();
             this.progressMgr = new ProgressManager();
             this.soundEl = null;
             this.display = [];
@@ -110,14 +111,14 @@ var client;
             const funcs = {
                 assetMetaLoader: async () => {
                     const assetLink = 'https://mega.nz/folder/gpJETZgD#JLfnT9zCoKEEn-b9k1crjw';
-                    let d = await this.reqMgr.megaMgr.req(assetLink);
+                    let d = await this.megaMgr.req(assetLink);
                     console.log(d)
                     this.asset.loaded.data = d;
                 },
                 assetMetaParse: () => {
                     //Make chr Tree;
                     const searchWorld = 'characters';
-                    const tree = this.reqMgr.megaMgr.reTreeMaker(this.asset.loaded.data.tree, searchWorld, j => j.replace('.zip', ''));
+                    const tree = this.megaMgr.reTreeMaker(this.asset.loaded.data.tree, searchWorld, j => j.replace('.zip', ''));
                     console.log(tree)
                     this.asset.loaded.char.tree = tree.t;
 
@@ -173,7 +174,7 @@ var client;
                     return [name, type, descPic];
                 },
                 bgLoader1: async a => {
-                    let link = await this.reqMgr.megaMgr.downloadPromise(a[2], { type: `image/${a[2].name.split('.')[1]}` });
+                    let link = await this.megaMgr.downloadPromise(a[2], { type: `image/${a[2].name.split('.')[1]}` });
                     return [a[0], a[1], link];
                 },
                 bgLoader2: async a => {
@@ -193,7 +194,7 @@ var client;
                         .find(e => e.name == tl[1]).children
                         .find(e => e.name == 'sound').children;
                     const sflink = pickone(soundarr);
-                    let u = await this.reqMgr.megaMgr.downloadPromise(sflink, { type: "audio/ogg" });
+                    let u = await this.megaMgr.downloadPromise(sflink, { type: "audio/ogg" });
                     this.asset.loaded.audio.push(u);
                 },
                 appendSound: () => {
